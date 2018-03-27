@@ -1,0 +1,28 @@
+task default: :usage
+
+task :usage do
+puts <<-USAGE
+Automatically generate documentation
+
+Usage:
+  rake command
+
+Commands
+  rake rke    - Generate docs for rke cluster.yml reference
+USAGE
+end
+
+task :rke do
+  require_relative 'generate_docs.rb'
+  require 'open-uri'
+
+  rke_types = 'https://raw.githubusercontent.com/rancher/types/master/apis/management.cattle.io/v3/rke_types.go'
+  title = 'RKE cluster.yml Reference'
+  docs = GenerateDocs.new(title)
+  output_file = 'rke_cluster_reference.md'
+
+  docs.dynamic(rke_types, output_file)
+
+  puts 'Doc generation complete!'
+  puts "'#{title}' written to #{output_file}"
+end
